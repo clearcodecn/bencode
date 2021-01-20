@@ -44,85 +44,106 @@ func TestBuf(t *testing.T) {
 }
 
 func TestDecode(t *testing.T) {
-	m := new(marshal)
-
 	var listMap = []interface{}{
-		[]int{1, 2, 3, 45, 65, 67},
-		[]int{1, 2, 3, 45, 65, 67},
-		[]int{1, 2, 3, 45, 65, 67},
-		[]int{1, 2, 3, 45, 65, 67},
 		12563214,
 		"absadasd",
 		map[string]string{
 			"hello": "111",
 		},
-		map[string]interface{}{
-			"hello": "111",
-		},
-		"asdasdasd",
-		"hahaha",
-		[]int{1, 2, 3, 45, 65, 67},
-		[]int{1, 2, 3, 45, 65, 67},
-		[]int{1, 2, 3, 45, 65, 67},
-		[]int{1, 2, 3, 45, 65, 67},
-		[]int{1, 2, 3, 45, 65, 67},
-		[]int{1, 2, 3, 45, 65, 67},
-		[]interface{}{
-			12563214,
-			"absadasd",
-			map[string]string{
-				"hello": "111",
-			},
-			map[string]interface{}{
-				"hello": "111",
-			},
-			"asdasdasd",
-			"hahaha",
-			[]interface{}{
-				12563214,
-				"absadasd",
-				map[string]string{
-					"hello": "111",
-				},
-				map[string]interface{}{
-					"hello": "111",
-				},
-				"asdasdasd",
-				"hahaha",
-				[]interface{}{
-					12563214,
-					"absadasd",
-					map[string]string{
-						"hello": "111",
-					},
-					map[string]interface{}{
-						"hello": "111",
-					},
-					"asdasdasd",
-					"hahaha",
-					[]interface{}{
-						12563214,
-						"absadasd",
-						map[string]string{
-							"hello": "111",
-						},
-						map[string]interface{}{
-							"hello": "111",
-						},
-						"asdasdasd",
-						"hahaha",
-					},
-				},
-			},
-		},
 	}
 
-	data := m.marshalList(listMap)
+	data := Marshal(listMap)
 	fmt.Println(data)
 
 	v, err := UnMarshal(data)
 	require.Nil(t, err)
 
-	data2 := m.marshal(v)
+	data2 := Marshal(v)
 	fmt.Println(data2)
+}
+
+func BenchmarkMarshal(t *testing.B) {
+	var listMap = []interface{}{
+		12563214,
+		"absadasd",
+		map[string]string{
+			"hello": "111",
+		},
+		map[string]string{
+			"hello": "111",
+		},
+		map[string]string{
+			"hello": "111",
+		},
+		map[string]string{
+			"hello": "111",
+		},
+		[]interface{}{
+			map[string]string{
+				"hello": "111",
+			},
+			map[string]string{
+				"hello": "111",
+			},
+			map[string]string{
+				"hello": "111",
+			},
+			map[string]string{
+				"hello": "111",
+			},
+			12563214,
+			"absadasd",
+			12563214,
+			"absadasd",
+			12563214,
+			"absadasd",
+		},
+	}
+	data := Marshal(listMap)
+	fmt.Println(data)
+}
+
+func BenchmarkUnMarshal(t *testing.B) {
+	var listMap = []interface{}{
+		12563214,
+		"absadasd",
+		map[string]string{
+			"hello": "111",
+		},
+		map[string]string{
+			"hello": "111",
+		},
+		map[string]string{
+			"hello": "111",
+		},
+		map[string]string{
+			"hello": "111",
+		},
+		[]interface{}{
+			map[string]string{
+				"hello": "111",
+			},
+			map[string]string{
+				"hello": "111",
+			},
+			map[string]string{
+				"hello": "111",
+			},
+			map[string]string{
+				"hello": "111",
+			},
+			12563214,
+			"absadasd",
+			12563214,
+			"absadasd",
+			12563214,
+			"absadasd",
+		},
+	}
+	data := Marshal(listMap)
+	fmt.Println(data)
+
+	t.ResetTimer()
+	_, err := UnMarshal(data)
+	require.Nil(t, err)
 }

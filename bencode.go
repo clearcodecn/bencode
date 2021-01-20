@@ -1,4 +1,4 @@
-package dht
+package bencode
 
 import (
 	"bufio"
@@ -163,6 +163,7 @@ func (m marshal) marshalMap(data map[string]interface{}) string {
 
 type unmarshal struct {
 	buf *bufio.Reader
+	r   *bytes.Buffer
 }
 
 func (m *unmarshal) unMarshal() (interface{}, error) {
@@ -231,7 +232,7 @@ func (m *unmarshal) unmarshalString() (string, error) {
 		return "", err
 	}
 	data = make([]byte, number)
-	n, err := m.buf.Read(data)
+	n, err := io.ReadFull(m.buf, data)
 	if err != nil {
 		return "", err
 	}
@@ -271,15 +272,11 @@ func (m *unmarshal) unmarshalList() ([]interface{}, error) {
 
 func (m *unmarshal) unmarshalMap() (map[string]interface{}, error) {
 	var data = make(map[string]interface{})
-
+	_, err := m.buf.Discard(1)
+	if err != nil {
+		return nil, err
+	}
 	for {
-		_, err := m.buf.Discard(1)
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return nil, err
-		}
 		key, err := m.unmarshalString()
 		if err != nil {
 			return nil, err
@@ -304,7 +301,8 @@ func (m *unmarshal) unmarshalMap() (map[string]interface{}, error) {
 
 func UnMarshal(s string) (interface{}, error) {
 	m := new(unmarshal)
-	m.buf = bufio.NewReader(bytes.NewBufferString(s))
+	m.r = bytes.NewBufferString(s)
+	m.buf = bufio.NewReader(m.r)
 	return m.unMarshal()
 }
 
